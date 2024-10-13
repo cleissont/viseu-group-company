@@ -13,6 +13,9 @@
             class="img-fluid mb-4"
           />
           <form @submit.prevent="handleLogin">
+            <div v-if="errorMessage" class="alert alert-danger">
+              {{ errorMessage }}
+            </div>
             <div class="mb-3 text-start">
               <label for="username" class="form-label">Usuário</label>
               <input
@@ -36,9 +39,7 @@
               />
             </div>
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary btn-md">
-                Entrar
-              </button>
+              <button type="submit" class="btn btn-primary">Entrar</button>
             </div>
           </form>
         </div>
@@ -48,18 +49,30 @@
 </template>
 
 <script>
+  import { login } from "@/services/authService"
+  import { mapActions } from "vuex"
+
   export default {
     name: "LoginPage",
     data() {
       return {
         username: "",
         password: "",
+        errorMessage: "",
       }
     },
     methods: {
-      handleLogin() {
-        console.log("Usuário:", this.username)
-        console.log("Senha:", this.password)
+      ...mapActions(["saveToken"]),
+      async handleLogin() {
+        try {
+          const response = await login(this.username, this.password)
+          this.saveToken(response.token)
+          console.log("Login bem-sucedido!")
+          this.$router.push("/home")
+        } catch (error) {
+          this.errorMessage =
+            error.response?.data?.message || "Usuário ou senha inválidos."
+        }
       },
     },
   }
@@ -73,26 +86,21 @@
     height: 100vh;
   }
 
-  /* Estilização do formulário */
   .login-form {
     width: 80%;
     max-width: 400px;
+    text-align: center;
   }
 
-  /* Estilização do botão */
   .btn-primary {
     background-color: #66a0c0;
     border-color: #66a0c0;
-    padding: 0.5rem 1.5rem;
+    padding: 0.375rem 1.75rem;
   }
 
   .btn-primary:hover {
     background-color: #66a0c0;
     border-color: #fff;
-  }
-
-  h2 {
-    color: #000;
   }
 
   .bg-light {
