@@ -1,8 +1,8 @@
 import { createStore } from "vuex"
 
-const store = createStore({
+export default createStore({
   state: {
-    token: localStorage.getItem("jwtToken") || "",
+    token: null,
   },
   mutations: {
     setToken(state, token) {
@@ -16,12 +16,15 @@ const store = createStore({
   },
   actions: {
     saveToken({ commit }, token) {
+      localStorage.setItem("authToken", token)
       commit("setToken", token)
     },
     logout({ commit }) {
       commit("clearToken")
+      this.$router.push({ name: "Login" })
     },
   },
+  getters: {
+    isLoggedIn: (state) => !!state.token,
+  },
 })
-
-export default store

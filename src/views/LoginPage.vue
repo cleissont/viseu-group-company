@@ -49,8 +49,7 @@
 </template>
 
 <script>
-  import { login } from "@/services/authService"
-  import { mapActions } from "vuex"
+  import api from "@/utils/axios.js"
 
   export default {
     name: "LoginPage",
@@ -62,16 +61,27 @@
       }
     },
     methods: {
-      ...mapActions(["saveToken"]),
       async handleLogin() {
         try {
-          const response = await login(this.username, this.password)
-          this.saveToken(response.token)
-          console.log("Login bem-sucedido!")
-          this.$router.push("/home")
+          const response = await api.post("/Auth/authenticate", {
+            username: this.username,
+            password: this.password,
+            conId: 0,
+          })
+
+          const token = response.data.jwtToken
+
+          await this.$store.dispatch("saveToken", token)
+
+          // Redirecionar se o usuário estiver autenticado
+          if (this.$store.getters.isLoggedIn) {
+            this.$router.push({ name: "CompanyList" })
+          } else {
+            this.errorMessage = "Erro ao salvar token de autenticação."
+          }
         } catch (error) {
-          this.errorMessage =
-            error.response?.data?.message || "Usuário ou senha inválidos."
+          this.errorMessage = "Usuário ou senha incorretos."
+          console.error(error)
         }
       },
     },
