@@ -121,6 +121,9 @@
         isDeleting: false,
       }
     },
+    created() {
+      this.loadCompanies()
+    },
     methods: {
       formatDate(date) {
         return format(new Date(date), "dd/MM/yyyy HH:mm:ss")
@@ -154,13 +157,28 @@
               },
             }
           )
-          this.companies = this.companies.filter((company) => company.id !== id)
-          console.log("Empresa excluída com sucesso.")
-          await this.created()
+          await this.loadCompanies()
         } catch (error) {
-          console.error(error)
+          console.error("Erro ao excluir empresa:", error)
         } finally {
           this.isDeleting = false
+          await this.loadCompanies()
+        }
+      },
+      async loadCompanies() {
+        try {
+          const response = await api.get("/companies/list", {
+            headers: {
+              Authorization: `Bearer ${this.$store.state.token}`,
+            },
+          })
+          this.companies = response.data
+          this.filteredCompanies = this.companies
+        } catch (error) {
+          this.errorMessage = "Erro ao carregar a lista de empresas."
+          console.error(error)
+        } finally {
+          this.loading = false
         }
       },
       filterCompanies() {
@@ -179,22 +197,6 @@
           return 0
         })
       },
-    },
-    async created() {
-      try {
-        const response = await api.get("/companies/list", {
-          headers: {
-            Authorization: `Bearer ${this.$store.state.token}`,
-          },
-        })
-        this.companies = response.data
-        this.filteredCompanies = this.companies
-      } catch (error) {
-        this.errorMessage = "Erro ao carregar a lista de empresas."
-        console.error(error)
-      } finally {
-        this.loading = false
-      }
     },
   }
 </script>
