@@ -27,7 +27,7 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer" v-if="!success">
+        <div class="modal-footer">
           <button
             class="btn btn-secondary"
             @click="close"
@@ -69,6 +69,7 @@
       return {
         success: false,
         errorMessage: "",
+        successMessage: "",
         localLoading: this.loading,
       }
     },
@@ -86,8 +87,7 @@
           if (result && result.success) {
             this.success = true
           } else {
-            this.errorMessage =
-              result?.error || "Erro ao excluir a empresa. Tente novamente."
+            this.success = result?.error || "Empresa excluída com sucesso!"
           }
         } catch (error) {
           this.errorMessage = "Erro ao excluir a empresa. Tente novamente."

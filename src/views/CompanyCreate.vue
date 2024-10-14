@@ -1,7 +1,16 @@
 <template>
   <div class="container mt-4">
     <h2>{{ isEdit ? "Editar Empresa" : "Cadastrar Nova Empresa" }}</h2>
-    <form @submit.prevent="handleSubmit">
+
+    <!-- Loading -->
+    <div v-if="isLoading" class="text-center my-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+    </div>
+
+    <!-- Form Company -->
+    <form v-else @submit.prevent="handleSubmit">
       <div class="mb-3">
         <label for="name" class="form-label">Nome da Empresa</label>
         <input
@@ -86,6 +95,7 @@
     data() {
       return {
         isEdit: !!this.id,
+        isLoading: false,
         company: {
           documento: "",
           name: "",
@@ -104,6 +114,7 @@
     methods: {
       async fetchCompanyDetails(id) {
         console.log("Fetching company with ID:", id)
+        this.isLoading = true
         try {
           const response = await api.get(`/companies/list`)
           console.log("Companies list:", response.data)
@@ -126,6 +137,8 @@
           }
         } catch (error) {
           console.error("Erro ao buscar dados da empresa:", error)
+        } finally {
+          this.isLoading = false
         }
       },
       validateCNPJ() {
@@ -146,8 +159,8 @@
             documento: this.company.documento,
             name: this.company.name,
             mailList: this.company.mailList,
-            contatosTecnicos: this.company.contatosTecnicos || [],
-            tecnologias: this.company.tecnologias || [],
+            contatosTecnicos: "[]",
+            tecnologias: "[]",
           }
 
           if (this.isEdit) {

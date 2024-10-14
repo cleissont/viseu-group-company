@@ -65,11 +65,7 @@
           <td>{{ company.name }}</td>
           <td>{{ company.documento }}</td>
           <td>
-            {{
-              Array.isArray(company.mailList) && company.mailList.length > 0
-                ? company.mailList.join(", ")
-                : "-"
-            }}
+            {{ company.mailList }}
           </td>
           <td>{{ formatDate(company.createdAt) }}</td>
           <td>{{ formatDate(company.updatedAt) }}</td>
@@ -149,14 +145,18 @@
       async deleteCompany(id) {
         this.isDeleting = true
         try {
-          await api.delete(`/companies/delete/${id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
+          await api.put(
+            "/companies/delete",
+            { id: id },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          )
           this.companies = this.companies.filter((company) => company.id !== id)
           console.log("Empresa excluída com sucesso.")
-          this.created()
+          await this.created()
         } catch (error) {
           console.error(error)
         } finally {

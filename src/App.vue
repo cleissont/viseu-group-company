@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navbar v-if="$store.getters.isLoggedIn" />
+    <Navbar v-if="$route.name !== 'Login'" />
     <router-view />
   </div>
 </template>
