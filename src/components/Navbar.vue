@@ -1,12 +1,10 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
     <div class="container-fluid">
-      <!-- Logo à esquerda -->
       <a class="navbar-brand" href="#">
         <img src="@/assets/logo-viseu.png" alt="Logo" width="100" />
       </a>
 
-      <!-- Botão de colapsar para dispositivos móveis -->
       <button
         class="navbar-toggler"
         type="button"
@@ -21,7 +19,6 @@
 
       <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav ms-auto">
-          <!-- Dropdown à direita -->
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -44,6 +41,12 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
+                <router-link class="dropdown-item" to="/companies/create">
+                  <i class="bi bi-building-add"></i> Adicionar Empresa
+                </router-link>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
                 <a class="dropdown-item" href="#" @click="logout">
                   <i class="bi bi-box-arrow-right"></i> Logout
                 </a>
@@ -61,7 +64,6 @@
     name: "Navbar-app",
     methods: {
       logout() {
-        // Limpar o token e redirecionar para a página de login
         this.$store.dispatch("saveToken", null)
         localStorage.removeItem("authToken")
         this.$router.push({ name: "Login" })
@@ -73,5 +75,8 @@
 <style scoped>
   .navbar-brand img {
     max-height: 40px;
+  }
+  .navbar.shadow {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 </style>

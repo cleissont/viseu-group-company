@@ -12,6 +12,14 @@
     components: {
       Navbar,
     },
+    created() {
+      const token = localStorage.getItem("authToken")
+      if (token) {
+        this.$store.dispatch("saveToken", token)
+      } else {
+        this.$router.push({ name: "Login" })
+      }
+    },
   }
 </script>
 

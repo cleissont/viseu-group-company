@@ -21,6 +21,12 @@ const routes = [
     component: CompanyCreate,
     meta: { requiresAuth: true },
   },
+  {
+    path: "/companies/edit/:id",
+    name: "CompanyEdit",
+    component: CompanyCreate,
+    props: true,
+  },
 ]
 
 const router = createRouter({
